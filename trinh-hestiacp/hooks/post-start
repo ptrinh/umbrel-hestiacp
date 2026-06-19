@@ -5,30 +5,31 @@
 # deterministic app password ($APP_PASSWORD) so the credentials shown in the
 # Umbrel UI actually work. Runs only once (guarded by a sentinel file) so it
 # never clobbers a password the user later changes inside the panel.
-
-set -euo pipefail
+#
+# The work is detached into the background: HestiaCP's systemd stack can take a
+# few minutes to come up on first boot, and we don't want to block app start
+# while we wait.
 
 CONTAINER="trinh-hestiacp_hestia_1"
 SENTINEL="${APP_DATA_DIR:-.}/.admin-password-set"
+# HestiaCP CLI tools aren't on PATH for a non-login `docker exec`, so call them
+# by absolute path.
+HBIN="/usr/local/hestia/bin"
 
 # Already initialised — nothing to do.
-if [ -f "$SENTINEL" ]; then
-  exit 0
-fi
+[ -f "$SENTINEL" ] && exit 0
 
-# HestiaCP + systemd take a while to come up on first boot. Poll for the panel
-# tooling to be ready, then set the password.
-for _ in $(seq 1 60); do
-  if docker exec "$CONTAINER" v-list-users >/dev/null 2>&1; then
-    if docker exec "$CONTAINER" v-change-user-password admin "$APP_PASSWORD"; then
-      touch "$SENTINEL"
-      echo "[trinh-hestiacp] admin password initialised from APP_PASSWORD"
-      exit 0
+# setsid fully detaches so the loop survives this hook returning.
+APP_PASSWORD="${APP_PASSWORD}" setsid bash -c '
+  for _ in $(seq 1 120); do
+    if docker exec "'"$CONTAINER"'" "'"$HBIN"'/v-list-users" >/dev/null 2>&1; then
+      if docker exec "'"$CONTAINER"'" "'"$HBIN"'/v-change-user-password" admin "$APP_PASSWORD"; then
+        touch "'"$SENTINEL"'"
+        break
+      fi
     fi
-  fi
-  sleep 5
-done
+    sleep 5
+  done
+' </dev/null >/dev/null 2>&1 &
 
-echo "[trinh-hestiacp] WARNING: timed out waiting for HestiaCP to set admin password." >&2
-echo "[trinh-hestiacp] Set it manually: docker exec $CONTAINER v-change-user-password admin '<password>'" >&2
 exit 0
