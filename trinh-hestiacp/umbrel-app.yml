@@ -1,0 +1,50 @@
+manifestVersion: 1
+id: trinh-hestiacp
+name: Hestia Control Panel
+tagline: Full-featured web hosting control panel
+icon: https://raw.githubusercontent.com/hestiacp/hestiacp/main/web/images/logo/hestiacp-light.svg
+category: Networking
+version: "1.9.6"
+port: 8083
+description: >-
+  Hestia Control Panel (HestiaCP) is an open-source web hosting control panel
+  for managing websites, email, databases, DNS and more from a single web UI —
+  the kind of panel you'd normally run on a dedicated server, now on your Umbrel.
+
+
+  It bundles a full LEMP/LAMP stack: Nginx + Apache, multiple PHP versions,
+  MariaDB, Exim + Dovecot mail, BIND DNS, FTP, and Fail2ban — all managed
+  through the panel.
+
+
+  ⚠️ Important notes before installing:
+
+  - This app runs a privileged, systemd-based container (HestiaCP needs to
+    manage system services and the firewall). It is heavier than a typical
+    Umbrel app and is best on a machine you control.
+
+  - The web UI uses a self-signed TLS certificate, so your browser will show a
+    certificate warning the first time — that's expected.
+
+  - Log in with username "admin" and the password shown on this page. You can
+    change it from inside the panel afterwards.
+developer: HestiaCP
+website: https://hestiacp.com
+submitter: Trinh
+submission: https://github.com/hestiacp/hestiacp
+repo: https://github.com/hestiacp/hestiacp
+support: https://forum.hestiacp.com
+gallery:
+  - https://hestiacp.com/img/screenshots/list_web.png
+  - https://hestiacp.com/img/screenshots/list_mail.png
+  - https://hestiacp.com/img/screenshots/list_db.png
+releaseNotes: >-
+  Initial Umbrel packaging of HestiaCP 1.9.6.
+
+  On first start the admin password is automatically set to your Umbrel app
+  password (shown above) so you can log in right away.
+dependencies: []
+path: ""
+deterministicPassword: true
+defaultUsername: admin
+defaultPassword: ${APP_PASSWORD}

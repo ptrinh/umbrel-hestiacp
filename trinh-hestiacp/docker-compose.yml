@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+  # Umbrel reverse-proxy in front of the HestiaCP web UI.
+  # HestiaCP serves its panel over HTTPS (self-signed) on port 8083, so we tell
+  # the proxy to speak HTTPS upstream. PROXY_AUTH_ADD is disabled because
+  # HestiaCP has its own login.
+  app_proxy:
+    environment:
+      APP_HOST: trinh-hestiacp_hestia_1
+      APP_PORT: 8083
+      APP_PROTOCOL: https
+      PROXY_AUTH_ADD: "false"
+
+  hestia:
+    image: smied/hestia-cp:latest@sha256:72fde6efa9ca479710d332c2c6b896b2a6641db1c5ea21a1302c5091340b42a6
+    restart: on-failure
+    stop_grace_period: 1m
+    # HestiaCP manages system services (nginx/apache/exim/dovecot/bind/fail2ban)
+    # and the firewall, so it runs systemd inside a privileged container.
+    privileged: true
+    cgroup: host
+    hostname: hestia.umbrel.local
+    environment:
+      - TZ=UTC
+    volumes:
+      - hestia_home:/home
+      - hestia_usr:/usr
+      - hestia_etc:/etc
+      - hestia_var:/var
+      - hestia_backup:/backup
+      - /sys/fs/cgroup:/sys/fs/cgroup
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k -sf https://localhost:8083/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 5m
+
+volumes:
+  hestia_home:
+  hestia_usr:
+  hestia_etc:
+  hestia_var:
+  hestia_backup:

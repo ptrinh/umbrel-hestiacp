@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# post-start hook
+# On the very first start, reset HestiaCP's "admin" password to Umbrel's
+# deterministic app password ($APP_PASSWORD) so the credentials shown in the
+# Umbrel UI actually work. Runs only once (guarded by a sentinel file) so it
+# never clobbers a password the user later changes inside the panel.
+
+set -euo pipefail
+
+CONTAINER="trinh-hestiacp_hestia_1"
+SENTINEL="${APP_DATA_DIR:-.}/.admin-password-set"
+
+# Already initialised — nothing to do.
+if [ -f "$SENTINEL" ]; then
+  exit 0
+fi
+
+# HestiaCP + systemd take a while to come up on first boot. Poll for the panel
+# tooling to be ready, then set the password.
+for _ in $(seq 1 60); do
+  if docker exec "$CONTAINER" v-list-users >/dev/null 2>&1; then
+    if docker exec "$CONTAINER" v-change-user-password admin "$APP_PASSWORD"; then
+      touch "$SENTINEL"
+      echo "[trinh-hestiacp] admin password initialised from APP_PASSWORD"
+      exit 0
+    fi
+  fi
+  sleep 5
+done
+
+echo "[trinh-hestiacp] WARNING: timed out waiting for HestiaCP to set admin password." >&2
+echo "[trinh-hestiacp] Set it manually: docker exec $CONTAINER v-change-user-password admin '<password>'" >&2
+exit 0
