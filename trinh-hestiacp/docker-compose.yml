@@ -2,15 +2,28 @@ version: "3.7"
 
 services:
   # Umbrel reverse-proxy in front of the HestiaCP web UI.
-  # HestiaCP serves its panel over HTTPS (self-signed) on port 8083, so we tell
-  # the proxy to speak HTTPS upstream. PROXY_AUTH_ADD is disabled because
-  # HestiaCP has its own login.
+  # HestiaCP only serves its panel over HTTPS with a self-signed certificate on
+  # port 8083. Umbrel's app_proxy validates upstream TLS and has no way to skip
+  # it, so it can't talk to HestiaCP directly. Instead we point the proxy at a
+  # small socat sidecar (plain HTTP) that transparently wraps the connection in
+  # TLS to HestiaCP, ignoring the self-signed cert. PROXY_AUTH_ADD is disabled
+  # because HestiaCP has its own login.
   app_proxy:
     environment:
-      APP_HOST: trinh-hestiacp_hestia_1
-      APP_PORT: 8083
-      APP_PROTOCOL: https
+      APP_HOST: trinh-hestiacp_sslproxy_1
+      APP_PORT: 8080
       PROXY_AUTH_ADD: "false"
+
+  # TLS-tunnel sidecar: listens on plain HTTP :8080 and forwards every byte to
+  # HestiaCP's HTTPS :8083, terminating/originating TLS with cert verification
+  # off. Transparent stream tunnel, so HestiaCP still sees a real HTTPS request
+  # (no scheme/redirect/Host issues). Multi-arch and unprivileged.
+  sslproxy:
+    image: alpine/socat:1.8.0.0@sha256:a6be4c0262b339c53ddad723cdd178a1a13271e1137c65e27f90a08c16de02b8
+    restart: on-failure
+    command:
+      - "TCP-LISTEN:8080,fork,reuseaddr"
+      - "OPENSSL-CONNECT:trinh-hestiacp_hestia_1:8083,verify=0"
 
   hestia:
     image: smied/hestia-cp:latest@sha256:72fde6efa9ca479710d332c2c6b896b2a6641db1c5ea21a1302c5091340b42a6
