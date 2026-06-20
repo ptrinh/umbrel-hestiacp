@@ -1,0 +1,50 @@
+manifestVersion: 1
+id: trinh-hestiacp-np
+name: Hestia Control Panel (non-privileged)
+tagline: Web hosting control panel — unprivileged, multi-arch build
+icon: https://raw.githubusercontent.com/hestiacp/hestiacp/main/web/images/logo/hestiacp-light.svg
+category: Networking
+version: "1.9.6"
+port: 8084
+description: >-
+  Hestia Control Panel (HestiaCP) — an open-source web hosting control panel for
+  websites, databases, DNS and more — running from a custom non-privileged,
+  multi-architecture image (ghcr.io/ptrinh/hestiacp).
+
+
+  Unlike the standard HestiaCP container, this build runs with NO privileged
+  mode and NO extra Linux capabilities: systemd is replaced with a systemctl
+  shim, and the firewall/fail2ban/quota features (which need elevated privilege)
+  are disabled.
+
+
+  This is the variant intended for submission to the official Umbrel App Store.
+
+
+  ⚠️ Notes:
+
+  - The web UI uses a self-signed TLS certificate — your browser will show a
+    one-time certificate warning.
+
+  - Log in with username "admin" and the password shown on this page.
+
+  - No in-panel firewall/fail2ban (handle network security at the Umbrel/router
+    level).
+developer: HestiaCP
+website: https://hestiacp.com
+submitter: Trinh
+submission: https://github.com/ptrinh/hestiacp-docker
+repo: https://github.com/ptrinh/hestiacp-docker
+support: https://forum.hestiacp.com
+gallery:
+  - https://hestiacp.com/img/screenshots/list_web.png
+  - https://hestiacp.com/img/screenshots/list_mail.png
+  - https://hestiacp.com/img/screenshots/list_db.png
+releaseNotes: >-
+  Non-privileged, multi-arch HestiaCP. Admin password is set to your Umbrel app
+  password on first start.
+dependencies: []
+path: ""
+deterministicPassword: true
+defaultUsername: admin
+defaultPassword: ${APP_PASSWORD}
