@@ -33,7 +33,7 @@ services:
       - "8088:80"
       - "8448:443"
     healthcheck:
-      test: ["CMD-SHELL", "curl -k -fs https://localhost:8083/login/ | grep -q 'name=.user.' || exit 1"]
+      test: ["CMD-SHELL", "test -f /usr/local/hestia/data/.admin-password-set && curl -k -fs https://localhost:8083/login/ | grep -q 'name=.user.' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 10
