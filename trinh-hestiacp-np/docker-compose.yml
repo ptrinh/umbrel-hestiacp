@@ -17,7 +17,7 @@ services:
       - "OPENSSL-CONNECT:trinh-hestiacp-np_hestia_1:8083,verify=0"
 
   hestia:
-    image: ghcr.io/ptrinh/hestiacp:latest
+    image: ghcr.io/ptrinh/hestiacp:build-28230633996@sha256:8f287116fa1573ae786134f98ec2263c52cbf9b809c82ff8cd629049975faa38
     restart: on-failure
     stop_grace_period: 1m
     environment:
