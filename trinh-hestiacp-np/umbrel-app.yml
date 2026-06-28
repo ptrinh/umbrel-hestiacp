@@ -1,29 +1,29 @@
 manifestVersion: 1
 id: trinh-hestiacp-np
-name: Hestia Control Panel (non-privileged)
-tagline: Web hosting control panel — unprivileged, multi-arch build
+name: Hestia CP
+tagline: Full open-source web hosting control panel
 icon: https://cdn.jsdelivr.net/gh/ptrinh/umbrel-hestiacp@main/logo.svg
 category: Networking
 version: "1.9.6"
 port: 8084
 description: >-
-  Hestia Control Panel (HestiaCP) — an open-source web hosting control panel for
-  websites, databases, DNS and more — running from a custom non-privileged,
-  multi-architecture image (ghcr.io/ptrinh/hestiacp).
+  Hestia Control Panel (HestiaCP) is an open-source web hosting control panel
+  for websites, databases, DNS, mail and FTP, running from a custom
+  non-privileged, multi-architecture (amd64 + arm64) image
+  (ghcr.io/ptrinh/hestiacp).
 
 
   Unlike the standard HestiaCP container, this build runs with NO privileged
   mode and NO extra Linux capabilities: systemd is replaced with a systemctl
   shim, and the firewall/fail2ban/quota features (which need elevated privilege)
-  are disabled.
+  are disabled. The full panel is otherwise intact: nginx + Apache, PHP-FPM,
+  MariaDB + PostgreSQL, mail (Exim/Dovecot/Roundcube), DNS, FTP, File Manager,
+  cron, phpMyAdmin and phpPgAdmin.
 
 
-  This is the variant intended for submission to the official Umbrel App Store.
+  Notes:
 
-
-  ⚠️ Notes:
-
-  - The web UI uses a self-signed TLS certificate — your browser will show a
+  - The web UI uses a self-signed TLS certificate, so your browser will show a
     one-time certificate warning.
 
   - Log in with username "admin" and the password shown on this page.
