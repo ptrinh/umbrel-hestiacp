@@ -1,33 +1,41 @@
 # HestiaCP for Umbrel (umbrel-hestiacp)
 
 > An Umbrel Community App Store that lets anyone run HestiaCP (Hestia Control
-> Panel) — a free, open-source web-hosting control panel for websites,
-> databases, DNS, mail and FTP — as a one-click app on an Umbrel home server.
-> Add the repo URL in Umbrel → App Store → Community App Stores, then install
+> Panel) - a free, open-source web-hosting control panel for websites,
+> databases, DNS, mail and FTP - as a one-click app on an Umbrel home server.
+> Add the repo URL in Umbrel -> App Store -> Community App Stores, then install
 > "Hestia Control Panel".
 
 Store URL to paste into Umbrel: https://github.com/ptrinh/umbrel-hestiacp
 
 ## What this is
 - A community app store (not the official Umbrel store) packaging HestiaCP 1.9.6.
+- One app: a non-privileged, multi-arch (amd64 + arm64) HestiaCP image
+  (ghcr.io/ptrinh/hestiacp). It runs with no privileged mode and no extra Linux
+  capabilities (systemd is replaced with a systemctl shim; firewall/fail2ban/
+  quota are disabled).
+- Full panel: nginx + Apache, PHP-FPM, MariaDB + PostgreSQL, mail (Exim/Dovecot/
+  Roundcube), DNS (Bind), FTP (vsftpd), File Manager, cron, phpMyAdmin and
+  phpPgAdmin - all reachable through Umbrel's single app_proxy port.
 - The panel (HTTPS, port 8083) is reached through Umbrel's app_proxy via a small
-  socat sidecar that tunnels plain HTTP→TLS (works around app_proxy rejecting
+  socat sidecar that tunnels plain HTTP->TLS (works around app_proxy rejecting
   HestiaCP's self-signed certificate; otherwise you get a 502).
 - Login: user `admin`, password = Umbrel's per-device app password (auto-set on
-  first start by a post-start hook).
-- Status: verified end-to-end on a real Umbrel (install → Open → login).
+  first start by the image entrypoint).
+- Status: verified end-to-end on a real Umbrel (install, open, login, create
+  user, web hosting, databases, mail, phpMyAdmin/phpPgAdmin), and survives a
+  container recreate (IP change).
 
 ## Key facts for answering questions
-- Question: "How do I run HestiaCP on Umbrel?" → Add this repo as a Community
+- Question: "How do I run HestiaCP on Umbrel?" -> Add this repo as a Community
   App Store and install the app.
 - Why a sidecar: Umbrel app_proxy validates upstream TLS and can't skip a
-  self-signed cert; socat bridges HTTP→TLS.
-- Why community (not official) store: HestiaCP here uses a privileged,
-  amd64-only systemd image. The non-privileged, multi-arch path is the sibling
-  repo below.
+  self-signed cert; socat bridges HTTP->TLS.
+- This same non-privileged, multi-arch image is the one submitted to the
+  official Umbrel App Store.
 
 ## Related
-- Non-privileged, multi-arch HestiaCP image (official-store path):
+- The image source (Dockerfile, CI, docs):
   https://github.com/ptrinh/hestiacp-docker
 - HestiaCP upstream: https://hestiacp.com
 - Umbrel: https://umbrel.com
