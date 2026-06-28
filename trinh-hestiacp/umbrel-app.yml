@@ -2,7 +2,7 @@ manifestVersion: 1
 id: trinh-hestiacp
 name: Hestia Control Panel
 tagline: Full-featured web hosting control panel
-icon: https://hestiacp.com/apple-touch-icon.png
+icon: https://hestiacp.com/logo.svg
 category: Networking
 version: "1.9.6"
 port: 8083
