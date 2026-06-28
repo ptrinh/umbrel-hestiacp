@@ -30,6 +30,10 @@ description: >-
 
   - No in-panel firewall/fail2ban (handle network security at the Umbrel/router
     level).
+
+  - For a user's SSH Access, use "bash" (or sh/dash/rbash). "jailbash" is not
+    supported on this unprivileged build (its bubblewrap sandbox needs
+    privileges this container does not have) and will lock that user out.
 developer: HestiaCP
 website: https://hestiacp.com
 submitter: Trinh

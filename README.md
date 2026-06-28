@@ -48,6 +48,12 @@ phpPgAdmin.
 Trade-off: **no in-panel firewall/fail2ban** - handle network security at the
 Umbrel/router level.
 
+For a user's **SSH Access** shell, use **`bash`** (or `sh`/`dash`/`rbash`).
+**`jailbash` is not supported** on this unprivileged build: HestiaCP's jailbash
+is a bubblewrap sandbox that needs unprivileged user namespaces, which this
+container doesn't have, so selecting it locks that user out of SSH and the File
+Manager. The File Manager itself works regardless of the shell.
+
 ---
 
 ## How it works
