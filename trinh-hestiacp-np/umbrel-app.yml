@@ -2,7 +2,7 @@ manifestVersion: 1
 id: trinh-hestiacp-np
 name: Hestia Control Panel (non-privileged)
 tagline: Web hosting control panel — unprivileged, multi-arch build
-icon: https://raw.githubusercontent.com/hestiacp/hestiacp/main/web/images/logo/hestiacp-light.svg
+icon: https://hestiacp.com/apple-touch-icon.png
 category: Networking
 version: "1.9.6"
 port: 8084
